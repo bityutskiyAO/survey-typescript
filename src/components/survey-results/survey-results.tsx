@@ -3,15 +3,16 @@ import styled from 'styled-components'
 import { Done } from '@styled-icons/material/Done'
 import { Cross } from '@styled-icons/entypo/Cross'
 
-import { IApiResults } from '../../interfaces'
-import { IAnswerValue } from '../survey/survey'
+import { IApiResults, ISurveyAnswerValue } from '../../interfaces'
 import { RowWrapper, Wrapper, TitleH5, Nameplate, TitleH4 } from '../../styled-components'
 import { SurveyButton } from '../survey-question/survey-question'
 import { useAppDispatch } from '../../utils'
-import { fetchSurvey } from '../../__data__/reducers/survey'
+import { fetchSurvey, clearAnswers } from '../../__data__/reducers/survey'
+
+import { calcWrightAnswers } from './utils'
 
 interface IResultProps {
-    answers: Array<IAnswerValue>,
+    answers: Array<ISurveyAnswerValue>,
     questions: Array<IApiResults>
 }
 
@@ -25,23 +26,18 @@ const ErrorIcon = styled(Cross)`
 
 const SurveyResults: FC<IResultProps> = ({ answers, questions }) => {
     const dispatch = useAppDispatch()
-    const mappedAnswersToString = useMemo(() => answers.map((answer) => {
-        const answerEntries = Object.entries(answer)
-        return answerEntries
-            .reduce((acc, [key, value], ind) => `${acc}${value && key}${(ind + 1) !== answerEntries.length ? ', ' : ''}`, '')
-    }), [answers])
     
-    const calcWrightAnswers = (): number => {
-        let wrightAnswers = 0
-        questions.forEach((question, ind) => {
-            if (question.correct_answer === mappedAnswersToString[ind]) {
-                wrightAnswers += 1
-            }
+    const mappedAnswers = useMemo(() => (
+        answers.map((answer) => {
+            const answerEntries = Object.entries(answer)
+            return answerEntries.reduce((acc, [key, value], ind) => (
+                `${acc}${value ? key : ''}${(ind + 1) !== answerEntries.length ? ', ' : ''}`
+            ), '')
         })
-        return wrightAnswers
-    }
+    ), [answers])
 
     const handleNewSurveyClick = () => {
+        dispatch(clearAnswers())
         dispatch(fetchSurvey())
     }
 
@@ -49,16 +45,15 @@ const SurveyResults: FC<IResultProps> = ({ answers, questions }) => {
         <Wrapper
             align="flex-start"
         >
-            <TitleH4
-                color="green"
-            >
-                {`Right Answers: ${calcWrightAnswers()} / ${questions.length}`}
+            <TitleH4>
+                {`Right Answers: ${calcWrightAnswers(questions, mappedAnswers)} / ${questions.length}`}
             </TitleH4>
             {questions.map((question, ind) => (
                 <>
                     <RowWrapper
                         align="flex-start"
-                        mt={16}
+                        justify="space-between"
+                        mt={32}
                     >
                         <TitleH4
                             color="black"
@@ -83,9 +78,9 @@ const SurveyResults: FC<IResultProps> = ({ answers, questions }) => {
                         <TitleH5
                             color="black"
                         >
-                            {mappedAnswersToString[ind]}
+                            {mappedAnswers[ind]}
                         </TitleH5>
-                        {question.correct_answer === mappedAnswersToString[ind] ?
+                        {question.correct_answer === mappedAnswers[ind] ?
                             <SuccessIcon size={28} /> :
                             <ErrorIcon size={28} />}
                     </RowWrapper>

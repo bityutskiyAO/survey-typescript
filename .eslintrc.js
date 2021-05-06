@@ -111,5 +111,6 @@ module.exports = {
             ObjectPattern: { minProperties: 0, multiline: true }
         }],
         'no-param-reassign': ['off'],
+        'max-len': ['warn', { code: 120 }],
     },
 }

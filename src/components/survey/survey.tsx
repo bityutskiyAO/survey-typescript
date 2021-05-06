@@ -1,17 +1,16 @@
 import React, { FC, useCallback, useEffect, useState } from 'react'
 import styled from 'styled-components'
 
-import { IApiResults } from '../../interfaces'
+import { IApiResults, ISurveyAnswerValue } from '../../interfaces'
 import SurveyQuestion from '../survey-question/survey-question'
 import { StyledWrapper } from '../../styled-components'
 import SurveyResults from '../survey-results/survey-results'
+import { useAppDispatch } from '../../utils'
+import { addAnswer } from '../../__data__/reducers/survey'
 
 interface ISurveyProps {
-    questions: Array<IApiResults>
-}
-
-export interface IAnswerValue {
-    [key: string]: boolean | string
+    questions: Array<IApiResults>,
+    answers: Array<ISurveyAnswerValue>
 }
 
 const SurveyWrapper = styled(StyledWrapper)`
@@ -20,16 +19,17 @@ const SurveyWrapper = styled(StyledWrapper)`
 `
 
 const Survey: FC<ISurveyProps> = (props) => {
-    const { questions } = props
-    const [currentQuestionNumber, setQuestionNumber] = useState<number>(1)
-    const [answers, setAnswers] = useState<Array<IAnswerValue>>([])
+    const { questions, answers } = props
+    const [currentQuestionNumber, setQuestionNumber] = useState<number>(0)
+    const dispatch = useAppDispatch()
+    // const [answers, setAnswers] = useState<Array<ISurveyAnswerValue>>([])
 
     useEffect(() => {
         setQuestionNumber(0)
     }, [questions])
 
-    const handleSendAnswer = useCallback((answer: IAnswerValue) => {
-        setAnswers((prevState) => ([...prevState, answer]))
+    const handleSendAnswer = useCallback((answer: ISurveyAnswerValue) => {
+        dispatch(addAnswer(answer))
         setQuestionNumber((prevState) => (prevState !== questions.length ?
             prevState + 1 : prevState))
     }, [currentQuestionNumber])
@@ -40,7 +40,7 @@ const Survey: FC<ISurveyProps> = (props) => {
                 (
                     <SurveyQuestion
                         onClick={handleSendAnswer}
-                        currentQuestionNumber={currentQuestionNumber}
+                        currentQuestionNumber={currentQuestionNumber + 1}
                         allQuestions={questions.length}
                         question={questions[currentQuestionNumber]}
                     />

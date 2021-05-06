@@ -3,15 +3,14 @@ import React, {
 } from 'react'
 import styled from 'styled-components'
 
-import { IApiResults } from '../../interfaces'
+import { IApiResults, ISurveyAnswerValue } from '../../interfaces'
 import Button from '../../styled-components/button/button'
 import Field from '../field/field'
 import { RowWrapper, Wrapper, Nameplate, TitleH4, TitleH5 } from '../../styled-components'
-import { IAnswerValue } from '../survey/survey'
 
 interface ISurveyQuestionProps {
     question: IApiResults,
-    onClick: (prop: IAnswerValue) => void,
+    onClick: (prop: ISurveyAnswerValue) => void,
     currentQuestionNumber: number,
     allQuestions: number
 }
@@ -22,7 +21,7 @@ export const SurveyButton = styled(Button)`
 
 const SurveyQuestion: FC<ISurveyQuestionProps> = (props) => {
     const { question, currentQuestionNumber, allQuestions, onClick } = props
-    const [value, setValue] = useState<IAnswerValue>({})
+    const [value, setValue] = useState<ISurveyAnswerValue>({})
     const concatAnswers = [question.correct_answer, ...question.incorrect_answers]
 
     useEffect(() => {

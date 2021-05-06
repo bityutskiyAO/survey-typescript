@@ -2,6 +2,7 @@ import Button from './button/button'
 import { TitleH1, TitleH2, TitleH3, TitleH4, TitleH5 } from './title/title'
 import { Wrapper, RowWrapper, StyledWrapper } from './wrapper/wrapper'
 import Nameplate from './nameplate/nameplate'
+import MainBox from './box/box'
 
 export {
     Button,
@@ -13,5 +14,6 @@ export {
     Wrapper,
     RowWrapper,
     StyledWrapper,
-    Nameplate
+    Nameplate,
+    MainBox
 }

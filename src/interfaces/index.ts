@@ -8,3 +8,7 @@ export interface IApiResults {
     question: string
     type: 'boolean' | 'multiple'
 }
+
+export interface ISurveyAnswerValue {
+    [key: string]: boolean | string
+}
