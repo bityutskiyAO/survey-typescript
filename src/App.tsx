@@ -1,26 +1,52 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { FC } from 'react'
+import styled from 'styled-components'
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+import { Survey } from './components'
+import { TitleH1, Button } from './styled-components'
+import { useAppDispatch, useAppSelector } from './utils'
+import { fetchSurvey } from './__data__/reducers/survey'
+
+const Box = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  min-height: 100vh;
+  padding: 32px 0 32px 0;
+`
+
+const App: FC = () => {
+    const {
+        questions
+    } = useAppSelector((state) => state.survey)
+    const dispatch = useAppDispatch()
+
+    const handleStartSurveyOnClick = () => {
+        dispatch(fetchSurvey())
+    }
+
+    return (
+        <Box>
+            {questions && questions.length > 0 ? (
+                <Survey
+                    questions={questions}
+                />
+            ) : (
+                <>
+                    <TitleH1>
+                        GoSurvey!
+                    </TitleH1>
+                    <Button
+                        className="bigBtn"
+                        onClick={handleStartSurveyOnClick}
+                    >
+                        Go!
+                    </Button>
+                </>
+            )}
+        </Box>
+    )
 }
 
-export default App;
+export default App
